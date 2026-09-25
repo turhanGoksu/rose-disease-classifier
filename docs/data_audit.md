@@ -120,3 +120,29 @@ A missed copy is leakage.
 copy that is not among them is missed. Mirrored copies are matched; copies
 that are both mirrored and heavily cropped may not be. Same-leaf re-shots
 with large pose changes, or the two sides of a leaf, are not detected.
+
+## Consequence: the split
+
+`scripts/make_split.py` turns the audit into `splits/rose_split.csv`
+(train / val / test = 70 / 15 / 15):
+
+- Near-duplicate pairs (≥ 20 inliers) are merged into groups, and **whole
+  groups** are assigned to a split. Images without a duplicate are groups of
+  one: 1,917 groups in total.
+- Each **source** (studio, fresh_leaf, black_spot), not just each class,
+  keeps a 70/15/15 share, so no split gets an unusual share of the easy
+  white-background studio images.
+- The script refuses to write the file if any group appears in two splits.
+
+| Split strategy | Near-duplicate pairs split across train/val/test |
+|---|---:|
+| Random, stratified by class (as in Project 2A), 20 seeds | 49–70 of 125 (mean 60) |
+| Group split (used) | 0 of 125 |
+
+The test split is used once, at the end. Checkpoint and model selection use
+val only, so the reported test numbers are not tuned on.
+
+The group split removes copy leakage. It does **not** remove the source
+shortcut: studio images are in every split, so a model that learned
+"white background → Healthy" would still score well on test. That is checked
+separately (metrics on the `resized_` sources only, and Grad-CAM).

@@ -65,13 +65,14 @@ def plot_history(
             ax.plot(epochs, history[key], linewidth=2, markersize=6,
                     label=label, **style)
             ends[label] = history[key][-1]
-        _direct_labels(ax, epochs[-1], ends)
         _style_axes(ax, title)
+        if ax is ax_metric:
+            ax.set_ylim(top=1.005)  # Scores end at 1; keep markers whole.
+        _direct_labels(ax, epochs[-1], ends)  # After the y-limits are set.
         ax.legend(frameon=False, labelcolor=INK, fontsize=9)
         if best_epoch is not None:
             ax.axvline(best_epoch, color=MUTED, linewidth=1, linestyle=":")
 
-    ax_metric.set_ylim(top=1.0)
     if best_epoch is not None:
         # Caption below the plots, so it never collides with the curves.
         fig.text(0.01, 0.01, f"Dotted line: best checkpoint "
@@ -138,19 +139,24 @@ def plot_confusion_matrices(
 
 
 def _direct_labels(ax, x: float, ends: dict[str, float]) -> None:
-    """Label each line at its last point, nudged apart so labels never
-    overlap when lines end close together."""
-    values = list(ends.values())
-    span = (max(values) - min(values)) or 1.0
-    min_gap = max(span, 0.1) * 0.08
-    placed: list[float] = []
-    for label, y in sorted(ends.items(), key=lambda item: item[1]):
-        if placed and y - placed[-1] < min_gap:
-            y = placed[-1] + min_gap
-        placed.append(y)
+    """Label each line at its last point. Labels closer than a minimum gap
+    are pushed apart downward, then the stack is kept inside the axes."""
+    bottom, top = ax.get_ylim()
+    gap = 0.06 * (top - bottom)
+    items = sorted(ends.items(), key=lambda item: -item[1])  # Top first.
+    positions: list[float] = []
+    for _, y in items:
+        y = min(y, top - gap / 2)
+        if positions and positions[-1] - y < gap:
+            y = positions[-1] - gap
+        positions.append(y)
+    overflow = bottom + gap / 2 - positions[-1]
+    if overflow > 0:  # Stack fell below the axes: shift it all up.
+        positions = [y + overflow for y in positions]
+    for (label, _), y in zip(items, positions):
         ax.annotate(label, xy=(x, y), xytext=(8, 0),
                     textcoords="offset points", va="center",
-                    color=INK, fontsize=8)
+                    color=INK, fontsize=8, annotation_clip=False)
 
 
 def _style_axes(ax, title: str) -> None:

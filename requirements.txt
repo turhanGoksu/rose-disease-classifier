@@ -5,3 +5,5 @@ torchvision>=0.17
 matplotlib>=3.8
 # Macro-F1, per-class precision/recall, confusion matrix, group-aware splits.
 scikit-learn>=1.3
+# Only for scripts/audit_data.py (ORB keypoint matching for near-duplicates).
+opencv-python-headless>=4.8

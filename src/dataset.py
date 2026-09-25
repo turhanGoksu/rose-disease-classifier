@@ -9,7 +9,7 @@ from pathlib import Path
 
 import torch
 from PIL import Image
-from torch.utils.data import DataLoader, Dataset, Sampler
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 from torchvision import transforms
 
 # Statistics of the ImageNet training set. The pretrained backbone learned its
@@ -61,6 +61,41 @@ def read_split(split_file: Path, data_dir: Path) -> dict[str, list[Sample]]:
         raise FileNotFoundError(f"{len(missing)} files from {split_file} are "
                                 f"missing under {data_dir}, e.g. {missing[0]}")
     return splits
+
+
+def class_counts(samples: list[Sample]) -> list[int]:
+    """Number of samples per class, in CLASS_NAMES order."""
+    counts = Counter(s.label for s in samples)
+    return [counts[i] for i in range(len(CLASS_NAMES))]
+
+
+def balanced_class_weights(samples: list[Sample]) -> torch.Tensor:
+    """Loss weight per class: N / (num_classes * n_class).
+
+    With 1040 Healthy and 376 Black_Spot this gives about [0.68, 1.88]:
+    every class contributes the same total weight to the loss, while each
+    image is still seen once per epoch.
+    """
+    counts = torch.tensor(class_counts(samples), dtype=torch.float)
+    return counts.sum() / (len(counts) * counts)
+
+
+def balanced_sampler(
+    samples: list[Sample], seed: int
+) -> WeightedRandomSampler:
+    """Draw classes equally often: each image is picked with probability
+    proportional to 1 / (size of its class).
+
+    Changes what the model sees: an epoch still has len(samples) draws, but
+    with replacement, so Black_Spot images repeat (~1.9x) and about half of
+    the Healthy images are not drawn at all in a given epoch.
+    """
+    counts = class_counts(samples)
+    weights = [1.0 / counts[s.label] for s in samples]
+    # Own generator: the draw order depends on the seed and nothing else.
+    generator = torch.Generator().manual_seed(seed)
+    return WeightedRandomSampler(weights, num_samples=len(samples),
+                                 replacement=True, generator=generator)
 
 
 class RandomRightAngleRotation:
@@ -130,15 +165,19 @@ def build_dataloaders(
     batch_size: int = 32,
     image_size: int = 224,
     num_workers: int = 2,
-    train_sampler: Sampler | None = None,
+    balanced_sampling: bool = False,
+    seed: int = 42,
 ) -> dict[str, DataLoader]:
     """Build the train/val/test DataLoaders from the split file.
 
     Args:
-        train_sampler: Decides which training images each batch draws
-            (step 7). None means plain shuffling, as in Project 2A.
+        balanced_sampling: Draw training batches with balanced_sampler()
+            instead of plain shuffling (as in Project 2A).
+        seed: Seed of the balanced sampler's own random generator.
     """
     splits = read_split(split_file, data_dir)
+    train_sampler = (balanced_sampler(splits["train"], seed)
+                     if balanced_sampling else None)
     train_transform, eval_transform = build_transforms(image_size)
     decode_size = 2 * image_size  # Headroom for RandomResizedCrop.
 

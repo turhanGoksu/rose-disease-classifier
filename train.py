@@ -5,14 +5,15 @@ once, with the best checkpoint, after training.
 
 Usage:
     python train.py --data-dir "~/Desktop/final dataset/Dataset/Rose"
-    python train.py --data-dir /kaggle/input/<dataset>/Rose \
-        --output-dir /kaggle/working/outputs
+    python train.py --data-dir /kaggle/input/<dataset> \
+        --output-dir /kaggle/working/outputs --balance sampler
 """
 from __future__ import annotations
 
 import argparse
 import csv
 import json
+from collections import Counter
 from pathlib import Path
 
 import torch
@@ -20,7 +21,8 @@ from torch import nn
 
 from src.checkpoint import load_checkpoint, save_checkpoint
 from src.dataset import (CLASS_NAMES, DEFAULT_SPLIT_FILE, POSITIVE_CLASS,
-                         Sample, build_dataloaders)
+                         Sample, balanced_class_weights, balanced_sampler,
+                         build_dataloaders, class_counts)
 from src.engine import (EvalResult, build_optimizer, evaluate, get_device,
                         train_one_epoch)
 from src.metrics import format_report, subset_metrics
@@ -34,10 +36,13 @@ def parse_args() -> argparse.Namespace:
                         help="The Rose folder with one sub-folder per class.")
     parser.add_argument("--split-file", type=Path, default=DEFAULT_SPLIT_FILE)
     parser.add_argument("--output-dir", type=Path, default=Path("outputs"))
-    parser.add_argument("--sampler", choices=("none",), default="none",
-                        help="How training batches are drawn.")
+    parser.add_argument("--balance", choices=("none", "sampler", "loss"),
+                        default="none",
+                        help="Class imbalance handling: none, balanced "
+                             "batches (WeightedRandomSampler), or class "
+                             "weights in the loss.")
     parser.add_argument("--run-name", default=None,
-                        help="Sub-folder of --output-dir. Default: sampler.")
+                        help="Sub-folder of --output-dir. Default: balance.")
     parser.add_argument("--epochs", type=int, default=15)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--lr", type=float, default=1e-3,
@@ -68,10 +73,28 @@ def save_predictions(
                              f"{prob:.4f}"])
 
 
+def preview_sampler_epoch(samples: list[Sample], seed: int) -> str:
+    """Describe what one epoch of balanced sampling draws, per class.
+
+    Uses its own sampler (seed + 1), so the real training order is not
+    affected by the preview.
+    """
+    draws: Counter[int] = Counter()
+    distinct: dict[int, set[int]] = {c: set() for c in range(len(CLASS_NAMES))}
+    for index in balanced_sampler(samples, seed + 1):
+        label = samples[index].label
+        draws[label] += 1
+        distinct[label].add(index)
+    totals = class_counts(samples)
+    return ", ".join(
+        f"{name}: {draws[c]} draws of {len(distinct[c])}/{totals[c]} "
+        f"distinct images" for c, name in enumerate(CLASS_NAMES))
+
+
 def main() -> None:
     args = parse_args()
     torch.manual_seed(args.seed)  # Same head init and shuffle order each run.
-    run_name = args.run_name or args.sampler
+    run_name = args.run_name or args.balance
     output_dir = args.output_dir.expanduser() / run_name
     output_dir.mkdir(parents=True, exist_ok=True)
     config = {key: str(value) if isinstance(value, Path) else value
@@ -81,19 +104,33 @@ def main() -> None:
     loaders = build_dataloaders(
         args.data_dir.expanduser(), args.split_file,
         batch_size=args.batch_size, num_workers=args.num_workers,
+        balanced_sampling=args.balance == "sampler", seed=args.seed,
     )
+    train_samples = loaders["train"].dataset.samples
     val_sources = [s.source for s in loaders["val"].dataset.samples]
     model = build_model(trainable_layers=tuple(args.trainable_layers))
     model = model.to(device)  # Move weights before creating the optimizer.
+    # Class weights only change the TRAINING loss. Val/test loss stays
+    # unweighted, so it means the same thing in every run.
+    class_weights = (balanced_class_weights(train_samples).to(device)
+                     if args.balance == "loss" else None)
+    train_criterion = nn.CrossEntropyLoss(weight=class_weights)
     criterion = nn.CrossEntropyLoss()
     optimizer = build_optimizer(model, head_lr=args.lr,
                                 backbone_lr=args.backbone_lr,
                                 weight_decay=args.weight_decay)
 
-    print(f"run={run_name} device={device} sampler={args.sampler} "
-          f"train={len(loaders['train'].dataset)} "
-          f"val={len(loaders['val'].dataset)} "
+    print(f"run={run_name} device={device} balance={args.balance} "
+          f"train={len(train_samples)} val={len(loaders['val'].dataset)} "
           f"test={len(loaders['test'].dataset)}")
+    print(f"train images per class: "
+          f"{dict(zip(CLASS_NAMES, class_counts(train_samples)))}")
+    if args.balance == "sampler":
+        print(f"one sampler epoch (preview): "
+              f"{preview_sampler_epoch(train_samples, args.seed)}")
+    if class_weights is not None:
+        print(f"loss class weights: "
+              f"{dict(zip(CLASS_NAMES, class_weights.tolist()))}")
 
     history: History = {key: [] for key in (
         "train_loss", "train_acc", "val_loss", "val_macro_f1",
@@ -102,7 +139,7 @@ def main() -> None:
     best_f1, best_loss, best_epoch = -1.0, float("inf"), 0
     for epoch in range(1, args.epochs + 1):
         train_loss, train_acc = train_one_epoch(
-            model, loaders["train"], criterion, optimizer, device)
+            model, loaders["train"], train_criterion, optimizer, device)
         val = evaluate(model, loaders["val"], criterion, device)
         metrics = subset_metrics(val.y_true, val.y_pred, val_sources)
         val_f1 = metrics["overall"]["macro_f1"]

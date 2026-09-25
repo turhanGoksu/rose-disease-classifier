@@ -1,0 +1,7 @@
+# Minimum versions only (no exact pins), so pip keeps the CUDA build of
+# torch/torchvision that Kaggle ships preinstalled instead of replacing it.
+torch>=2.2
+torchvision>=0.17
+matplotlib>=3.8
+# Macro-F1, per-class precision/recall, confusion matrix, group-aware splits.
+scikit-learn>=1.3

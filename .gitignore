@@ -1,0 +1,19 @@
+# Dataset and training artifacts (large binaries do not belong in git)
+data/
+outputs/
+*.pt
+*.pth
+
+# Secrets
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# OS
+.DS_Store

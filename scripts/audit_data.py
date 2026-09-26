@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import random
 import re
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass
@@ -295,6 +296,38 @@ def save_pair_grid(
     sheet.save(out_path)
 
 
+def save_source_samples(
+    paths: list[Path],
+    records: list[ImageRecord],
+    out_path: Path,
+    per_source: int = 6,
+    thumb: int = 150,
+    seed: int = 0,
+) -> None:
+    """Save one row of random thumbnails per filename family (source)."""
+    rng = random.Random(seed)
+    by_source: dict[str, list[int]] = defaultdict(list)
+    for idx, r in enumerate(records):
+        by_source[r.filename_pattern].append(idx)
+    label_h = 22
+    sheet = Image.new("RGB", (per_source * thumb,
+                              len(by_source) * (thumb + label_h)), "white")
+    draw = ImageDraw.Draw(sheet)
+    for row, (source, members) in enumerate(sorted(by_source.items())):
+        y = row * (thumb + label_h)
+        first = records[members[0]]
+        draw.text((4, y + 5), f"{source}: {first.label}, {len(members)} "
+                  f"images, {first.resolution}", fill="black")
+        for col, idx in enumerate(rng.sample(members,
+                                             min(per_source, len(members)))):
+            with Image.open(paths[idx]) as img:
+                img.draft("RGB", (thumb, thumb))
+                img = img.convert("RGB")
+                img.thumbnail((thumb, thumb))
+                sheet.paste(img, (col * thumb, y + label_h))
+    sheet.save(out_path)
+
+
 def scan(data_dir: Path, classes: list[str]) -> list[tuple[Path, str]]:
     """List (path, class name) for every image in the chosen class folders."""
     items: list[tuple[Path, str]] = []
@@ -403,14 +436,15 @@ def main() -> None:
             writer.writerow([inliers, round(float(corr[i, j]), 4),
                              f"{records[i].label}/{records[i].filename}",
                              f"{records[j].label}/{records[j].filename}"])
+    save_source_samples(paths, records, output_dir / "sources.png")
     # One grid per band, to check by eye where real copies stop.
     for lo, hi in bands[1:]:
         band = [p for p in scored if lo <= p[2] < hi][:24]
         if band:
             save_pair_grid(band, paths, records,
                            output_dir / f"pairs_inliers_{lo}.png")
-    print(f"\nWrote images.csv, near_duplicate_pairs.csv and pair grids "
-          f"to {output_dir}")
+    print(f"\nWrote images.csv, near_duplicate_pairs.csv, sources.png and "
+          f"pair grids to {output_dir}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,74 @@
+{
+  "checkpoint": "kaggle_outputs/none/best.pt",
+  "splits": [
+    "val",
+    "test"
+  ],
+  "paper_tone": [
+    195,
+    194,
+    196
+  ],
+  "background": {
+    "black_spot (true Black_Spot)": {
+      "images": 11,
+      "accuracy_before": 0.9090909090909091,
+      "accuracy_after": 0.6363636363636364,
+      "flipped": 3,
+      "mean_p_black_spot_before": 0.9067777444777841,
+      "mean_p_black_spot_after": 0.6325245014899834
+    },
+    "fresh_leaf (true Healthy)": {
+      "images": 10,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 0.015714341388516573,
+      "mean_p_black_spot_after": 0.00017322437991431627
+    },
+    "studio (true Healthy)": {
+      "images": 298,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 4.097711870128158e-05,
+      "mean_p_black_spot_after": 4.6999473799792845e-05
+    }
+  },
+  "resolution": {
+    "studio (true Healthy)": {
+      "images": 298,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 4.6586363303810624e-05,
+      "mean_p_black_spot_after": 5.545301553234229e-05
+    }
+  },
+  "grayscale": {
+    "black_spot (true Black_Spot)": {
+      "images": 159,
+      "accuracy_before": 0.9874213836477987,
+      "accuracy_after": 0.6918238993710691,
+      "flipped": 47,
+      "mean_p_black_spot_before": 0.9822131271310057,
+      "mean_p_black_spot_after": 0.6684404308074356
+    },
+    "fresh_leaf (true Healthy)": {
+      "images": 150,
+      "accuracy_before": 0.9933333333333333,
+      "accuracy_after": 0.98,
+      "flipped": 4,
+      "mean_p_black_spot_before": 0.01530425959859602,
+      "mean_p_black_spot_after": 0.018682739277267994
+    },
+    "studio (true Healthy)": {
+      "images": 298,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 4.097711870128158e-05,
+      "mean_p_black_spot_after": 1.5142737697754607e-06
+    }
+  }
+}

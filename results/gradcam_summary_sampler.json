@@ -1,0 +1,79 @@
+{
+  "checkpoint": "kaggle_outputs/sampler/best.pt",
+  "epoch": 8,
+  "splits": [
+    "val",
+    "test"
+  ],
+  "background_share": {
+    "black_spot (true Black_Spot)": {
+      "images": 11,
+      "cam": 0.6579942513595928,
+      "leaf_only_floor": 0.3361888582056219,
+      "uniform_cam": 0.8842510725881262
+    },
+    "fresh_leaf (true Healthy)": {
+      "images": 10,
+      "cam": 0.6803670883178711,
+      "leaf_only_floor": 0.2692464366555214,
+      "uniform_cam": 0.8152204241071429
+    },
+    "studio (true Healthy)": {
+      "images": 298,
+      "cam": 0.5983456234203889,
+      "leaf_only_floor": 0.2207259384277683,
+      "uniform_cam": 0.7542017200126695
+    }
+  },
+  "groups": {
+    "black_spot": {
+      "images": 146,
+      "shown": [
+        "resized_Black Spot_2927.jpg",
+        "resized_Black Spot_317.jpg",
+        "resized_Black Spot_2881.jpg",
+        "resized_Black Spot_502.jpg",
+        "resized_Black Spot_486.jpg"
+      ]
+    },
+    "black_spot_white_bg": {
+      "images": 9,
+      "shown": [
+        "resized_Black Spot_2460.jpg",
+        "resized_Black Spot_2399.jpg",
+        "resized_Black Spot_2501.jpg",
+        "resized_Black Spot_2108.jpg",
+        "resized_Black Spot_2200.jpg"
+      ]
+    },
+    "errors": {
+      "images": 4,
+      "shown": [
+        "resized_Black Spot_2266.jpg",
+        "resized_Black Spot_2346.jpg",
+        "resized_Black Spot_2847.jpg",
+        "resized_Black Spot_2859.jpg"
+      ]
+    },
+    "fresh_leaf_healthy": {
+      "images": 150,
+      "shown": [
+        "resized_Fresh Leaf_3672.jpg",
+        "resized_Fresh Leaf_670.jpg",
+        "resized_Fresh Leaf_524.jpg",
+        "resized_Fresh Leaf_534.jpg",
+        "resized_Fresh Leaf_381.jpg"
+      ]
+    },
+    "studio_healthy": {
+      "images": 298,
+      "shown": [
+        "IMG (380).jpg",
+        "IMG (1425).JPG",
+        "IMG (1288).JPG",
+        "IMG (275).jpg",
+        "IMG (210).jpg"
+      ]
+    }
+  }
+}

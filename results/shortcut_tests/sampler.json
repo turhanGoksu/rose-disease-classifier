@@ -1,0 +1,100 @@
+{
+  "checkpoint": "kaggle_outputs/sampler/best.pt",
+  "splits": [
+    "val",
+    "test"
+  ],
+  "paper_tone": [
+    195,
+    194,
+    196
+  ],
+  "background": {
+    "black_spot (true Black_Spot)": {
+      "images": 11,
+      "accuracy_before": 0.8181818181818182,
+      "accuracy_after": 0.5454545454545454,
+      "flipped": 3,
+      "mean_p_black_spot_before": 0.8449404017407108,
+      "mean_p_black_spot_after": 0.5633186827313197
+    },
+    "fresh_leaf (true Healthy)": {
+      "images": 10,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 0.018807448064853814,
+      "mean_p_black_spot_after": 0.0031414985498031457
+    },
+    "studio (true Healthy)": {
+      "images": 298,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 0.0006215011698734122,
+      "mean_p_black_spot_after": 0.0021241644679680155
+    }
+  },
+  "resolution": {
+    "studio (true Healthy)": {
+      "images": 298,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 0.0006561463389693171,
+      "mean_p_black_spot_after": 0.000634049891695436
+    }
+  },
+  "grayscale": {
+    "black_spot (true Black_Spot)": {
+      "images": 159,
+      "accuracy_before": 0.9748427672955975,
+      "accuracy_after": 0.7924528301886793,
+      "flipped": 29,
+      "mean_p_black_spot_before": 0.9653908283121696,
+      "mean_p_black_spot_after": 0.788864660046
+    },
+    "fresh_leaf (true Healthy)": {
+      "images": 150,
+      "accuracy_before": 1.0,
+      "accuracy_after": 0.98,
+      "flipped": 3,
+      "mean_p_black_spot_before": 0.013891439434752708,
+      "mean_p_black_spot_after": 0.02380015899954742
+    },
+    "studio (true Healthy)": {
+      "images": 298,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 0.0006215011698734122,
+      "mean_p_black_spot_after": 0.00011997067830220877
+    }
+  },
+  "unseen": {
+    "Rose_Downy_Mildew": {
+      "images": 750,
+      "predicted_black_spot": 0.668
+    },
+    "Rose_Insect_Damage": {
+      "images": 497,
+      "predicted_black_spot": 0.45875251509054327
+    },
+    "Rose_Mosaic_Virus": {
+      "images": 487,
+      "predicted_black_spot": 0.6201232032854209
+    },
+    "Rose_Powdery_Mildew": {
+      "images": 706,
+      "predicted_black_spot": 0.7719546742209632
+    },
+    "Rose_Rust": {
+      "images": 479,
+      "predicted_black_spot": 0.732776617954071
+    },
+    "Rose_Yellow_Mosaic_Virus": {
+      "images": 430,
+      "predicted_black_spot": 0.08837209302325581
+    }
+  }
+}

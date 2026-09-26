@@ -1,0 +1,74 @@
+{
+  "checkpoint": "kaggle_outputs/loss/best.pt",
+  "splits": [
+    "val",
+    "test"
+  ],
+  "paper_tone": [
+    195,
+    194,
+    196
+  ],
+  "background": {
+    "black_spot (true Black_Spot)": {
+      "images": 11,
+      "accuracy_before": 0.9090909090909091,
+      "accuracy_after": 0.5454545454545454,
+      "flipped": 4,
+      "mean_p_black_spot_before": 0.9069511038674549,
+      "mean_p_black_spot_after": 0.539272468242664
+    },
+    "fresh_leaf (true Healthy)": {
+      "images": 10,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 0.03467215655764448,
+      "mean_p_black_spot_after": 0.00010097403631945668
+    },
+    "studio (true Healthy)": {
+      "images": 298,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 0.0035592211548159977,
+      "mean_p_black_spot_after": 5.1462324605142295e-05
+    }
+  },
+  "resolution": {
+    "studio (true Healthy)": {
+      "images": 298,
+      "accuracy_before": 1.0,
+      "accuracy_after": 0.9966442953020134,
+      "flipped": 1,
+      "mean_p_black_spot_before": 0.0035241534359845986,
+      "mean_p_black_spot_after": 0.004995531855859028
+    }
+  },
+  "grayscale": {
+    "black_spot (true Black_Spot)": {
+      "images": 159,
+      "accuracy_before": 0.9811320754716981,
+      "accuracy_after": 0.7735849056603774,
+      "flipped": 33,
+      "mean_p_black_spot_before": 0.9720264174770447,
+      "mean_p_black_spot_after": 0.7584281625850053
+    },
+    "fresh_leaf (true Healthy)": {
+      "images": 150,
+      "accuracy_before": 1.0,
+      "accuracy_after": 0.9933333333333333,
+      "flipped": 1,
+      "mean_p_black_spot_before": 0.013071986562379295,
+      "mean_p_black_spot_after": 0.016832620160267164
+    },
+    "studio (true Healthy)": {
+      "images": 298,
+      "accuracy_before": 1.0,
+      "accuracy_after": 1.0,
+      "flipped": 0,
+      "mean_p_black_spot_before": 0.0035592211548159977,
+      "mean_p_black_spot_after": 0.0013441498165063879
+    }
+  }
+}

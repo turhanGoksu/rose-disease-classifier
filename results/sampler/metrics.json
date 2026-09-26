@@ -1,0 +1,205 @@
+{
+  "run": "sampler",
+  "best_epoch": 8,
+  "config": {
+    "data_dir": "/kaggle/input/datasets/turhangksu/rose-disease-data",
+    "split_file": "splits/rose_split.csv",
+    "output_dir": "/kaggle/working/outputs",
+    "balance": "sampler",
+    "run_name": null,
+    "epochs": 15,
+    "batch_size": 32,
+    "lr": 0.001,
+    "backbone_lr": 0.0001,
+    "weight_decay": 0.01,
+    "num_workers": 2,
+    "seed": 42,
+    "trainable_layers": [
+      "layer4"
+    ]
+  },
+  "val": {
+    "loss": 0.012590219875021017,
+    "metrics": {
+      "overall": {
+        "n": 304,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "Rose_Healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 224
+          },
+          "Rose_Black_Spot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 80
+          }
+        },
+        "confusion_matrix": [
+          [
+            224,
+            0
+          ],
+          [
+            0,
+            80
+          ]
+        ]
+      },
+      "same_source": {
+        "n": 155,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class": {
+          "Rose_Healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 75
+          },
+          "Rose_Black_Spot": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 80
+          }
+        },
+        "confusion_matrix": [
+          [
+            75,
+            0
+          ],
+          [
+            0,
+            80
+          ]
+        ]
+      },
+      "studio": {
+        "n": 149,
+        "accuracy": 1.0,
+        "macro_f1": null,
+        "per_class": {
+          "Rose_Healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 149
+          },
+          "Rose_Black_Spot": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "confusion_matrix": [
+          [
+            149,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    }
+  },
+  "test": {
+    "loss": 0.04335981754896542,
+    "metrics": {
+      "overall": {
+        "n": 303,
+        "accuracy": 0.9867986798679867,
+        "macro_f1": 0.982588208251925,
+        "per_class": {
+          "Rose_Healthy": {
+            "precision": 0.9824561403508771,
+            "recall": 1.0,
+            "f1": 0.9911504424778761,
+            "support": 224
+          },
+          "Rose_Black_Spot": {
+            "precision": 1.0,
+            "recall": 0.9493670886075949,
+            "f1": 0.974025974025974,
+            "support": 79
+          }
+        },
+        "confusion_matrix": [
+          [
+            224,
+            0
+          ],
+          [
+            4,
+            75
+          ]
+        ]
+      },
+      "same_source": {
+        "n": 154,
+        "accuracy": 0.974025974025974,
+        "macro_f1": 0.974025974025974,
+        "per_class": {
+          "Rose_Healthy": {
+            "precision": 0.9493670886075949,
+            "recall": 1.0,
+            "f1": 0.974025974025974,
+            "support": 75
+          },
+          "Rose_Black_Spot": {
+            "precision": 1.0,
+            "recall": 0.9493670886075949,
+            "f1": 0.974025974025974,
+            "support": 79
+          }
+        },
+        "confusion_matrix": [
+          [
+            75,
+            0
+          ],
+          [
+            4,
+            75
+          ]
+        ]
+      },
+      "studio": {
+        "n": 149,
+        "accuracy": 1.0,
+        "macro_f1": null,
+        "per_class": {
+          "Rose_Healthy": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 149
+          },
+          "Rose_Black_Spot": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "confusion_matrix": [
+          [
+            149,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    }
+  }
+}
